@@ -6,6 +6,11 @@ from core.serializers import BookingSerializer
 from django.db import IntegrityError
 from datetime import date,datetime
 from django.utils import timezone
+from django.db import transaction
+from rest_framework.views import APIView
+from rest_framework import status
+from core.models import Seat, Booking , Waitlist
+
 
 # create a booking
 @api_view(['POST'])
@@ -83,4 +88,47 @@ def cancel_booking(request,booking_id):
             'message' : 'Booking has been cancelled. Waitlisted user promoted.'
         })
 
-    return Response({'message','Booking cancelled. No waitlisted user found.'})
+    return Response({'message': 'Booking cancelled. No waitlisted user found.'})
+
+#Race Condition
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+@transaction.atomic
+def book_seat(request):
+    user = request.user
+    seat_id = request.data.get("seat_id")
+    booking_date = request.data.get("date")  # we get sends "YYYY-MM-DD"
+
+    if not seat_id:
+        return Response({'error': 'Seat ID is required'}, status=400)
+
+    if not booking_date:
+        booking_date = date.today()
+    else:
+        try:
+            booking_date = datetime.strptime(booking_date, "%Y-%m-%d").date()
+        except ValueError:
+            return Response({'error': 'Invalid date format. Use YYYY-MM-DD'}, status=400)
+
+    try:
+        seat = Seat.objects.select_for_update().get(id=seat_id)
+
+        # Prevent duplicate bookings for the user on the same date
+        if Booking.objects.filter(user=user, date=booking_date).exists():
+            return Response({'error': 'You already have a booking on this date'}, status=400)
+
+        # Check if seat is already booked
+        if Booking.objects.filter(seat=seat, date=booking_date).exists():
+            # If seat is booked, automatically add the user to the waitlist
+            if not Waitlist.objects.filter(user=user, seat=seat, date=booking_date).exists():
+                Waitlist.objects.create(user=user, seat=seat, date=booking_date)
+                return Response({'message': 'Seat already booked. You have been added to the waitlist.'}, status=202)
+            else:
+                return Response({'message': 'You are already on the waitlist for this seat and date.'}, status=200)
+
+        # If seat is not booked, we will create a booking
+        Booking.objects.create(user=user, seat=seat, date=booking_date)
+        return Response({'message': 'Seat booked successfully for today'}, status=201)
+
+    except Seat.DoesNotExist:
+        return Response({'error': 'Seat not found'}, status=404)
