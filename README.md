@@ -61,6 +61,25 @@ A flexible **seat reservation and attendance system** for hybrid workplaces — 
 
 ---
 
+##  API Documentation
+
+Interactive API documentation is available via **Swagger UI**.
+
+### 🔗 Access Swagger
+
+-  [Swagger UI](http://localhost:8000/swagger/)  
+
+> Make sure your Django server is running locally at `http://localhost:8000`
+
+---
+
+###  API Features
+- Test endpoints directly in the browser
+- View all request/response formats
+- Explore authentication-protected routes
+
+
+
 ##  Postman Collection
 Postman collection for testing all available API endpoints.
 
