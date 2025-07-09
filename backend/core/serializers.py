@@ -23,7 +23,7 @@ class FloorPlanSerializer(serializers.ModelSerializer):
 class SeatSerializer(serializers.ModelSerializer):
     class Meta:
         model = Seat
-        fields = ['id','floor_plan','label','row','col','is_active']
+        fields = ['id','floor_plan','label','row','column','is_active']
 
 #5. Booking
 class BookingSerializer(serializers.ModelSerializer):

@@ -10,7 +10,7 @@ from django.db import IntegrityError
 @permission_classes([IsAuthenticated])
 def join_waitlist(request):
     user = request.user
-    seat_id = request.data.get('seat')
+    seat_id = request.data.get('seat_id')
     booking_date = request.data.get('date')
 
     if not seat_id or not booking_date:

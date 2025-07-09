@@ -9,33 +9,68 @@ from django.utils import timezone
 from django.db import transaction
 from rest_framework.views import APIView
 from rest_framework import status
-from core.models import Seat, Booking , Waitlist
+from core.models import User, Seat, Booking , Waitlist
 
 
-# create a booking
+# create a booking by the manager
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def create_booking(request):
     user = request.user
-    seat_id = request.data.get('seat')
+
+    if user.role != 'manager':
+        return Response({'error': 'Only managers can create bookings for others.'}, status=403)
+
+    target_user_id = request.data.get('user_id')
+    seat_id = request.data.get('seat_id')
     booking_date = request.data.get('date')
 
-    # if seat_id or booking_date is none or missing
-    if not seat_id or not booking_date:
-        return Response({'error':'seat and date are required'},status = 400)
-    
+    if not target_user_id or not seat_id or not booking_date:
+        return Response({'error': 'user_id, seat_id, and date are required'}, status=400)
+
+    try:
+        target_user = User.objects.get(id=target_user_id)
+        seat = Seat.objects.get(id=seat_id)
+        booking_date = datetime.strptime(booking_date, "%Y-%m-%d").date()
+    except User.DoesNotExist:
+        return Response({'error': 'User not found'}, status=404)
+    except Seat.DoesNotExist:
+        return Response({'error': 'Seat not found'}, status=404)
+    except ValueError:
+        return Response({'error': 'Invalid date format. Use YYYY-MM-DD'}, status=400)
+
+    #  user already has a booking on that date
+    if Booking.objects.filter(user=target_user, date=booking_date).exists():
+        return Response({'error': 'This user already has a booking on this date'}, status=409)
+
+    # Check if the seat is already booked on that date
+    if Booking.objects.filter(seat=seat, date=booking_date).exists():
+        return Response({'error': 'Seat already booked on this date'}, status=409)
+
     try:
         booking = Booking.objects.create(
-            user=user,
-            seat_id=seat_id,
-            date=booking_date
+            user=target_user,
+            seat=seat,
+            date=booking_date,
+            booked_by_manager=True
         )
-        serializer=BookingSerializer(booking)
-        return Response(serializer.data,status=201)
-    except IntegrityError:
-        return Response({'error':'Seat already booked for that day'},status = 409)
+        serializer = BookingSerializer(booking)
+        return Response(serializer.data, status=201)
 
-# mark attendance is booking for today is present  
+    except IntegrityError:
+        return Response({'error': 'Booking failed due to a constraint'}, status=500)
+    
+#view booking
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def my_bookings(request):
+    user = request.user
+    bookings = Booking.objects.filter(user=user).order_by('-date')
+    serializer = BookingSerializer(bookings, many=True)
+    return Response(serializer.data)
+
+
+# mark attendance if booking for today is present  
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def mark_attendance(request):

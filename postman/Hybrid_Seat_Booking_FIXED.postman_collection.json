@@ -1,0 +1,468 @@
+{
+  "info": {
+    "name": "Hybrid Seat Booking System",
+    "_postman_id": "seat-booking-collection",
+    "description": "Postman collection for testing the hybrid seat booking system APIs.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Register User",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/auth/register/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "auth",
+            "register",
+            ""
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"testuser\",\n  \"email\": \"test@example.com\",\n  \"password\": \"testpassword\",\n  \"role\": \"employee\",\n  \"organization\": 1\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Login User",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/auth/login/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "auth",
+            "login",
+            ""
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"testuser\",\n  \"password\": \"testpassword\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Create Booking",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Token {{auth_token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/bookings/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "bookings",
+            ""
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"seat\": 1,\n  \"date\": \"2025-07-09\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Book Seat (Smart)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Token {{auth_token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/book_seat/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "book_seat",
+            ""
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"seat_id\": 1,\n  \"date\": \"2025-07-09\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Get My Bookings",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Token {{auth_token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/bookings/my/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "bookings",
+            "my",
+            ""
+          ]
+        }
+      }
+    },
+    {
+      "name": "Mark Attendance",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Token {{auth_token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/bookings/mark/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "bookings",
+            "mark",
+            ""
+          ]
+        }
+      }
+    },
+    {
+      "name": "Cancel Booking",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Token {{auth_token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/bookings/cancel/1/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "bookings",
+            "cancel",
+            "1",
+            ""
+          ]
+        }
+      }
+    },
+    {
+      "name": "Join Waitlist",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Token {{auth_token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/waitlist/join/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "waitlist",
+            "join",
+            ""
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"seat\": 1,\n  \"date\": \"2025-07-09\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "My Waitlist",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Token {{auth_token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/waitlist/my/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "waitlist",
+            "my",
+            ""
+          ]
+        }
+      }
+    },
+    {
+      "name": "Leave Waitlist",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Token {{auth_token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/waitlist/leave/1/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "waitlist",
+            "leave",
+            "1",
+            ""
+          ]
+        }
+      }
+    },
+    {
+      "name": "List Floorplans",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Token {{auth_token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/floorplans/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "floorplans",
+            ""
+          ]
+        }
+      }
+    },
+    {
+      "name": "Create Floorplan",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Token {{auth_token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/floorplans/create/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "floorplans",
+            "create",
+            ""
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"First Floor\",\n  \"rows\": 10,\n  \"columns\": 10,\n  \"organization\": 1\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Seat Grid Status",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Token {{auth_token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/floorplans/1/seat-grid/?date=2025-07-09",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "floorplans",
+            "1",
+            "seat-grid",
+            "?date=2025-07-09"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Get Seats by Floorplan",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Token {{auth_token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/seats/?floorplan_id=1",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "seats",
+            "?floorplan_id=1"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Bulk Create Seats",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Token {{auth_token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/seats/bulk-create/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "seats",
+            "bulk-create",
+            ""
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"floorplan_id\": 1,\n  \"seats\": [\n    {\n      \"label\": \"A1\",\n      \"row\": 0,\n      \"column\": 0\n    },\n    {\n      \"label\": \"A2\",\n      \"row\": 0,\n      \"column\": 1\n    }\n  ]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Analytics Summary",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Token {{auth_token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/analytics/summary/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "analytics",
+            "summary",
+            ""
+          ]
+        }
+      }
+    },
+    {
+      "name": "All Bookings (Manager)",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Token {{auth_token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/bookings/all/",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "bookings",
+            "all",
+            ""
+          ]
+        }
+      }
+    }
+  ]
+}

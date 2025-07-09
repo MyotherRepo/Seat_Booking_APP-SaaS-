@@ -21,7 +21,7 @@ def create_floorplan(request):
         return Response({'error' : 'Only managers can create floor plans'},status = 403)
     
     data = request.data.copy()
-    data['organization'] = request.user.organisation.id
+    data['organization'] = request.user.organization.id
 
     serializer = FloorPlanSerializer(data=data)
     if serializer.is_valid():
@@ -35,36 +35,33 @@ def create_floorplan(request):
 def bulk_create_seats(request):
     user = request.user
     if user.role != 'manager':
-        return Response({'error' : 'Only managers can create seats'},status=403)
-    
+        return Response({'error': 'Only managers can create seats'}, status=403)
+
     floorplan_id = request.data.get('floorplan_id')
-    seats = request.data.get('seats',[])
+    seats = request.data.get('seats', [])
 
     if not floorplan_id or not seats:
-        return Response({'error' : 'floorplan_id and seats are required'},status=400)
-    
+        return Response({'error': 'floorplan_id and seats are required'}, status=400)
+
     try:
-        floorplan = FloorPlan.objects.get(id=floorplan_id,organisation=user.organisation)
+        floorplan = FloorPlan.objects.get(id=floorplan_id, organization=user.organization)
     except FloorPlan.DoesNotExist:
-        return Response({'error' : 'Floorplan not found'},status=404)
-    
+        return Response({'error': 'Floorplan not found'}, status=404)
+
     created = []
     for seat_data in seats:
         seat = Seat.objects.create(
-            floorplan = floorplan,
-            label=seat_data.get('label',''),
+            floor_plan=floorplan,
+            label=seat_data.get('label', ''),
             row=seat_data['row'],
             column=seat_data['column']
         )
 
-        created.append(
-            {
-                'id' : seat.id,
-                'label' : seat.label,
-                'row' : seat.row,
-                'column' : seat.column
-        
-            }
-        )
+        created.append({
+            'id': seat.id,
+            'label': seat.label,
+            'row': seat.row,
+            'column': seat.column
+        })
 
-    return Response({'message' : 'Seat created successfully' , 'seats' : created},status=201)
+    return Response({'message': 'Seats created successfully', 'seats': created}, status=201)

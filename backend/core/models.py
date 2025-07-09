@@ -31,7 +31,7 @@ class FloorPlan(models.Model):
     columns = models.IntegerField(default=10)
 
     def __str__(self):
-        return f"{self.organisation.name} - {self.name}"
+        return f"{self.organization.name} - {self.name}"
 
 #4. Seat (associated with a particular floor plan)
 class Seat(models.Model):
